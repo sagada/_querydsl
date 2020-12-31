@@ -194,7 +194,7 @@ public class QueryDslBasicTest {
                             member.age.avg(),
                             member.age.max(),
                             member.age.min())
-                        .from(member)
+                        .from(member) 
                         .fetch();
 
         Tuple tuple = result.get(0);
