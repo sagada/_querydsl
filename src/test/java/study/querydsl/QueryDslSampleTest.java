@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import study.querydsl.dto.MemberDto;
+import study.querydsl.dto.QUserDto;
 import study.querydsl.dto.UserDto;
 import study.querydsl.entity.Member;
 import study.querydsl.entity.QMember;
@@ -32,8 +33,7 @@ public class QueryDslSampleTest {
     JPAQueryFactory jpaQueryFactory;
 
     @BeforeEach
-    public void init()
-    {
+    public void init() {
         jpaQueryFactory = new JPAQueryFactory(entityManager);
 
         Team teamA = new Team("A");
@@ -59,8 +59,7 @@ public class QueryDslSampleTest {
     }
 
     @Test
-    public void oneTest()
-    {
+    public void oneTest() {
         List<Member> result = jpaQueryFactory
                 .select(member)
                 .from(member)
@@ -71,8 +70,7 @@ public class QueryDslSampleTest {
     }
 
     @Test
-    public void quereyDtoTestSetter()
-    {
+    public void quereyDtoTestSetter() {
         List<MemberDto> result = jpaQueryFactory
                 .select(Projections.bean(MemberDto.class, member.username, member.age))
                 .from(member)
@@ -82,8 +80,7 @@ public class QueryDslSampleTest {
     }
 
     @Test
-    public void quereyDtoTestField()
-    {
+    public void quereyDtoTestField() {
         List<MemberDto> result = jpaQueryFactory
                 .select(Projections.fields(MemberDto.class, member.username, member.age))
                 .from(member)
@@ -93,8 +90,7 @@ public class QueryDslSampleTest {
     }
 
     @Test
-    public void quereyDtoTestConstructor()
-    {
+    public void quereyDtoTestConstructor() {
         List<MemberDto> result = jpaQueryFactory
                 .select(Projections.constructor(MemberDto.class, member.username, member.age))
                 .from(member)
@@ -104,8 +100,7 @@ public class QueryDslSampleTest {
     }
 
     @Test
-    public void quereyUserDtoTestConstructor()
-    {
+    public void quereyUserDtoTestConstructor() {
         List<UserDto> result = jpaQueryFactory
                 .select(Projections.fields(UserDto.class, member.username.as("name"), member.age))
                 .from(member)
@@ -115,8 +110,7 @@ public class QueryDslSampleTest {
     }
 
     @Test
-    public void quereyUserDtoTestConstructor3()
-    {
+    public void quereyUserDtoTestConstructor3() {
         QMember memberSub = new QMember("memberSub");
         List<UserDto> result = jpaQueryFactory
                 .select(
@@ -133,20 +127,38 @@ public class QueryDslSampleTest {
     }
 
     @Test
-    public void quereyUserDtoTestConstructor4()
-    {
+    public void queryTestFileds() {
         QMember memberSub = new QMember("memberSub");
+
+
         List<UserDto> result = jpaQueryFactory
                 .select(
-                        Projections.constructor(UserDto.class
-                                , member.username.as("name"),
-                                ExpressionUtils
-                                        .as(JPAExpressions.select(memberSub.age.max()).from(memberSub), "age")
+                        Projections.fields(UserDto.class,
+                                member.username.as("name"),
+                                ExpressionUtils.as(JPAExpressions.select(memberSub.age.max()).from(memberSub), "age")
                         )
                 )
                 .from(member)
                 .fetch();
 
-        result.forEach(System.out::println);
+        for (UserDto userDto : result) {
+            System.out.println(userDto);
+        }
     }
+
+    @Test
+    public void findDtoByQueryProjection()
+    {
+        List<UserDto> result = jpaQueryFactory
+                .select(new QUserDto(member.username, member.age))
+                .from(member)
+                .fetch();
+        for (UserDto userDto : result) {
+            System.out.println(userDto);
+        }
+    }
+
+
+
+
 }
