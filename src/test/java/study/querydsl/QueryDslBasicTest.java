@@ -19,6 +19,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.querydsl.jpa.JPAExpressions.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -137,7 +138,7 @@ public class QueryDslBasicTest {
 
         System.out.println("offset = " + offset);
         System.out.println("limit = " + limit);
-        System.out.println("count = " + count);
+        System. out.println("count = " + count);
         List<Member> contents = memberQueryResults.getResults();
     }
 
@@ -156,9 +157,6 @@ public class QueryDslBasicTest {
         List<Member> result = jpaQueryFactory.selectFrom(member)
                 .where(member.age.eq(100)).orderBy(member.age.desc(), member.username.asc().nullsLast())
                 .fetch();
-
-
-
         Member member5= result.get(0);
         Member member6 = result.get(1);
         Member memberNull = result.get(2);
@@ -166,6 +164,47 @@ public class QueryDslBasicTest {
         assertThat(member5.getUsername()).isEqualTo("member5");
         assertThat(member6.getUsername()).isEqualTo("member6");
         assertThat(memberNull.getUsername()).isNull();
+    }
+
+    @Test
+    public void tes11t()
+    {
+
+        em.persist(new Member(null, 5));
+        em.persist(new Member("member5", 12));
+        em.persist(new Member("member6", 7));
+
+        List<Member> result = jpaQueryFactory
+                .selectFrom(member)
+                .where(member.age.lt(10))
+                .orderBy(member.age.desc())
+                .fetch();
+
+        result.forEach(s-> System.out.println("member = " + s));
+    }
+
+    @Test
+    public void tupleQueryTest()
+    {
+        em.persist(new Member("C", 51));
+        em.persist(new Member("member5", 12));
+        em.persist(new Member("member6", 78));
+        em.persist(new Member("A", 56));
+        em.persist(new Member("memberT", 12));
+        em.persist(new Member("member6", 7));
+        em.persist(new Member("CCC", 25));
+        em.persist(new Member("memberF", 12));
+        em.persist(new Member("member6", 17));
+
+        List<Tuple> result = jpaQueryFactory.select(QMember.member.username, QMember.member.age)
+                .from(QMember.member)
+                .where(QMember.member.username.contains("member"))
+                .orderBy(QMember.member.age.desc())
+                .fetch();
+
+        List<Member> convert = result.stream().map(m -> new Member(m.get(member.username), m.get(member.age))).collect(Collectors.toList());
+        convert.forEach(s-> System.out.println("member = " + s));
+
     }
 
     @Test
@@ -225,6 +264,12 @@ public class QueryDslBasicTest {
         assertThat(teamA.get(member.age.avg())).isEqualTo(10);
         assertThat(teamB.get(team.name)).isEqualTo("B");
         assertThat(teamB.get(member.age.avg())).isEqualTo(15);
+    }
+
+    @Test
+    public void get()
+    {
+
     }
 
     @Test
@@ -294,6 +339,7 @@ public class QueryDslBasicTest {
         {
             System.out.println("tuple2 = " + tuple);
         }
+
     }
 
     @PersistenceUnit
