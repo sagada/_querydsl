@@ -53,8 +53,7 @@ public class MemberRepositoryTest {
     }
 
     @Test
-    public void simplePagingTest()
-    {
+    public void simplePagingTest() {
         Team teamA = new Team("A");
         Team teamB = new Team("B");
 
@@ -77,13 +76,12 @@ public class MemberRepositoryTest {
         Page<MemberTeamDto> search = memberRepository.searchPageSimple(memberSearchCondition, pageRequest);
 
         assertThat(search.getSize()).isEqualTo(3);
-        assertThat(search.getContent()).extracting("username").containsExactly("memberA","memberB","memberC");
+        assertThat(search.getContent()).extracting("username").containsExactly("memberA", "memberB", "memberC");
 
     }
 
     @Test
-    public void complexPagingTest()
-    {
+    public void complexPagingTest() {
         Team teamA = new Team("A");
         Team teamB = new Team("B");
 
@@ -106,13 +104,12 @@ public class MemberRepositoryTest {
         Page<MemberTeamDto> search = memberRepository.searchPageComplex(memberSearchCondition, pageRequest);
 
         assertThat(search.getSize()).isEqualTo(3);
-        assertThat(search.getContent()).extracting("username").containsExactly("memberA","memberB","memberC");
+        assertThat(search.getContent()).extracting("username").containsExactly("memberA", "memberB", "memberC");
 
     }
 
     @Test
-    public void querydslPredicateExecutorTest()
-    {
+    public void querydslPredicateExecutorTest() {
         Team teamA = new Team("A");
         Team teamB = new Team("B");
 
@@ -132,8 +129,7 @@ public class MemberRepositoryTest {
         QMember member = QMember.member;
         Iterable<Member> members = memberRepository.findAll(member.age.between(5, 40).and(member.username.eq("memberA")));
 
-        for (Member member1 : members)
-        {
+        for (Member member1 : members) {
             System.out.println("memberA :" + member1);
         }
     }

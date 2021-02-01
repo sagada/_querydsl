@@ -20,12 +20,11 @@ import java.util.List;
 import static study.querydsl.entity.QMember.member;
 import static study.querydsl.entity.QTeam.team;
 
-public class MemberRepositoryImpl implements MemberRepositoryCustom{
+public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
-    public MemberRepositoryImpl(EntityManager entityManager)
-    {
+    public MemberRepositoryImpl(EntityManager entityManager) {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
@@ -98,7 +97,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom{
                 .fetch();
 
 
-        JPAQuery<Member> countQuery =  queryFactory
+        JPAQuery<Member> countQuery = queryFactory
                 .select(member)
                 .from(member)
 //                .leftJoin(member.team, team)  얘는 카운트에 필요없다.
@@ -112,23 +111,19 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom{
 //        return new PageImpl<>(contents, pageable, count);
     }
 
-    private BooleanExpression ageGoe(Integer ageGoe)
-    {
+    private BooleanExpression ageGoe(Integer ageGoe) {
         return ageGoe != null ? member.age.goe(ageGoe) : null;
     }
 
-    private BooleanExpression ageLoe(Integer ageLoe)
-    {
+    private BooleanExpression ageLoe(Integer ageLoe) {
         return ageLoe != null ? member.age.loe(ageLoe) : null;
     }
 
-    private BooleanExpression teamNameEq(String teamName)
-    {
+    private BooleanExpression teamNameEq(String teamName) {
         return StringUtils.hasText(teamName) ? team.name.eq(teamName) : null;
     }
 
-    private BooleanExpression userNameEq(String username)
-    {
+    private BooleanExpression userNameEq(String username) {
         return StringUtils.hasText(username) ? member.username.eq(username) : null;
     }
 }

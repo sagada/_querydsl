@@ -13,10 +13,9 @@ class QuerydslApplicationTests {
 
     @Autowired
     EntityManager em;
-    
+
     @Test
-    void contextLoads() 
-    {
+    void contextLoads() {
 
     }
 

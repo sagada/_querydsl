@@ -36,8 +36,7 @@ public class QueryDslBasicTest {
     JPAQueryFactory jpaQueryFactory;
 
     @BeforeEach
-    public void before()
-    {
+    public void before() {
         jpaQueryFactory = new JPAQueryFactory(em);
         Team teamA = new Team("A");
         Team teamB = new Team("B");
@@ -57,8 +56,7 @@ public class QueryDslBasicTest {
     }
 
     @Test
-    public void firstJPQL()
-    {
+    public void firstJPQL() {
         // member1 을 찾자
         Member m = em.createQuery("select m from Member m where m.username = :username", Member.class)
                 .setParameter("username", "memberA")
@@ -68,8 +66,7 @@ public class QueryDslBasicTest {
     }
 
     @Test
-    public void queryDsl()
-    {
+    public void queryDsl() {
         QMember m = new QMember("m");
 
         Member findMember = jpaQueryFactory.select(m)
@@ -77,44 +74,38 @@ public class QueryDslBasicTest {
                 .where(m.username.eq("memberA"))
                 .fetchOne();
 
-        if (findMember != null)
-        {
+        if (findMember != null) {
             assertThat(findMember.getUsername()).isEqualTo("memberA");
         }
     }
 
     @Test
-    public void queryDsl2()
-    {
+    public void queryDsl2() {
         Member findMember = jpaQueryFactory
                 .select(member)
                 .from(member)
                 .where(member.username.eq("memberA"))
                 .fetchOne();
 
-        if (findMember != null)
-        {
+        if (findMember != null) {
             assertThat(findMember.getUsername()).isEqualTo("memberA");
         }
     }
 
     @Test
-    public void search()
-    {
+    public void search() {
         Member findMember = jpaQueryFactory
                 .selectFrom(member)
                 .where(member.username.eq("memberA").and(member.age.eq(10)))
                 .fetchOne();
 
-        if (findMember != null)
-        {
+        if (findMember != null) {
             assertThat(findMember.getUsername()).isEqualTo("memberA");
         }
     }
 
     @Test
-    public void search2()
-    {
+    public void search2() {
         List<Member> findMembers = jpaQueryFactory
                 .selectFrom(member)
                 .where(member.age.between(10, 30))
@@ -124,8 +115,7 @@ public class QueryDslBasicTest {
     }
 
     @Test
-    public void resultFetch()
-    {
+    public void resultFetch() {
         QueryResults<Member> memberQueryResults = jpaQueryFactory
                 .selectFrom(member)
                 .offset(1)
@@ -138,7 +128,7 @@ public class QueryDslBasicTest {
 
         System.out.println("offset = " + offset);
         System.out.println("limit = " + limit);
-        System. out.println("count = " + count);
+        System.out.println("count = " + count);
         List<Member> contents = memberQueryResults.getResults();
     }
 
@@ -148,8 +138,7 @@ public class QueryDslBasicTest {
         3. 2에서 회원 이름이 없으면 마지막에 출력
      */
     @Test
-    public void sort()
-    {
+    public void sort() {
         em.persist(new Member(null, 100));
         em.persist(new Member("member5", 100));
         em.persist(new Member("member6", 100));
@@ -157,7 +146,7 @@ public class QueryDslBasicTest {
         List<Member> result = jpaQueryFactory.selectFrom(member)
                 .where(member.age.eq(100)).orderBy(member.age.desc(), member.username.asc().nullsLast())
                 .fetch();
-        Member member5= result.get(0);
+        Member member5 = result.get(0);
         Member member6 = result.get(1);
         Member memberNull = result.get(2);
 
@@ -167,8 +156,7 @@ public class QueryDslBasicTest {
     }
 
     @Test
-    public void tes11t()
-    {
+    public void tes11t() {
 
         em.persist(new Member(null, 5));
         em.persist(new Member("member5", 12));
@@ -180,12 +168,11 @@ public class QueryDslBasicTest {
                 .orderBy(member.age.desc())
                 .fetch();
 
-        result.forEach(s-> System.out.println("member = " + s));
+        result.forEach(s -> System.out.println("member = " + s));
     }
 
     @Test
-    public void tupleQueryTest()
-    {
+    public void tupleQueryTest() {
         em.persist(new Member("C", 51));
         em.persist(new Member("member5", 12));
         em.persist(new Member("member6", 78));
@@ -203,13 +190,12 @@ public class QueryDslBasicTest {
                 .fetch();
 
         List<Member> convert = result.stream().map(m -> new Member(m.get(member.username), m.get(member.age))).collect(Collectors.toList());
-        convert.forEach(s-> System.out.println("member = " + s));
+        convert.forEach(s -> System.out.println("member = " + s));
 
     }
 
     @Test
-    public void paging1()
-    {
+    public void paging1() {
         QueryResults<Member> members = jpaQueryFactory
                 .selectFrom(member)
                 .orderBy(member.username.desc())
@@ -224,16 +210,15 @@ public class QueryDslBasicTest {
     }
 
     @Test
-    public void aggregation()
-    {
+    public void aggregation() {
         List<Tuple> result =
                 jpaQueryFactory.select(
-                            member.count(),
-                            member.age.sum(),
-                            member.age.avg(),
-                            member.age.max(),
-                            member.age.min())
-                        .from(member) 
+                        member.count(),
+                        member.age.sum(),
+                        member.age.avg(),
+                        member.age.max(),
+                        member.age.min())
+                        .from(member)
                         .fetch();
 
         Tuple tuple = result.get(0);
@@ -247,8 +232,7 @@ public class QueryDslBasicTest {
         팀의 이름과 각 팀의 평균 연령을 구하라
      */
     @Test
-    public void aggregation2()
-    {
+    public void aggregation2() {
         List<Tuple> result = jpaQueryFactory
                 .select(team.name, member.age.avg())
                 .from(member)
@@ -267,14 +251,7 @@ public class QueryDslBasicTest {
     }
 
     @Test
-    public void get()
-    {
-
-    }
-
-    @Test
-    public void join1()
-    {
+    public void join1() {
         List<Member> result = jpaQueryFactory
                 .selectFrom(member)
                 .join(member.team, team)
@@ -288,8 +265,7 @@ public class QueryDslBasicTest {
         회원의 이름이 팀 이름과 같은 회원 조회
      */
     @Test
-    public void theta_join()
-    {
+    public void theta_join() {
         em.persist(new Member("A"));
         em.persist(new Member("B"));
         em.persist(new Member("C"));
@@ -307,8 +283,7 @@ public class QueryDslBasicTest {
      * JPQL : select m, t from Member m left join m.team t on t.name = 'A'
      */
     @Test
-    public void join_on_filter()
-    {
+    public void join_on_filter() {
         em.persist(new Member("A"));
         em.persist(new Member("B"));
         em.persist(new Member("C"));
@@ -328,15 +303,13 @@ public class QueryDslBasicTest {
                 .on(member.username.eq(team.name))
                 .fetch();
 
-        for (Tuple tuple : tuples)
-        {
+        for (Tuple tuple : tuples) {
             System.out.println("tuple1 = " + tuple);
         }
 
         System.out.println("#######");
 
-        for (Tuple tuple : tuples2)
-        {
+        for (Tuple tuple : tuples2) {
             System.out.println("tuple2 = " + tuple);
         }
 
@@ -346,28 +319,26 @@ public class QueryDslBasicTest {
     EntityManagerFactory emf;
 
     @Test
-    public void fetch_join_test()
-    {
-         em.flush();
-         em.clear();
+    public void fetch_join_test() {
+        em.flush();
+        em.clear();
 
-         Member m = jpaQueryFactory.selectFrom(member)
-                 .join(member.team, team).fetchJoin()
-                 .where(member.username.eq("memberA"))
-                 .fetchOne();
+        Member m = jpaQueryFactory.selectFrom(member)
+                .join(member.team, team).fetchJoin()
+                .where(member.username.eq("memberA"))
+                .fetchOne();
 
         boolean loaded = emf.getPersistenceUnitUtil().isLoaded(m.getTeam());
-         assertThat(loaded).as("페치 조인 미적용").isTrue();
+        assertThat(loaded).as("페치 조인 미적용").isTrue();
     }
 
     @Test
-    public void subQuery()
-    {
+    public void subQuery() {
         QMember memberSub = new QMember("memberSub");
         List<Member> m = jpaQueryFactory.selectFrom(QMember.member)
                 .where(QMember.member.age.eq(
                         select(memberSub.age.max())
-                            .from(memberSub)
+                                .from(memberSub)
                 ))
                 .fetch();
 
@@ -375,8 +346,7 @@ public class QueryDslBasicTest {
     }
 
     @Test
-    public void subQuery2()
-    {
+    public void subQuery2() {
         QMember memberSub = new QMember("memberSub");
         List<Member> m = jpaQueryFactory.selectFrom(QMember.member)
                 .where(QMember.member.age.goe(
@@ -389,8 +359,7 @@ public class QueryDslBasicTest {
     }
 
     @Test
-    public void whereSubQueryInTest()
-    {
+    public void whereSubQueryInTest() {
         QMember memberSub = new QMember("memberSub");
         List<Member> m = jpaQueryFactory.selectFrom(QMember.member)
                 .where(member.age.in(
@@ -404,8 +373,7 @@ public class QueryDslBasicTest {
     }
 
     @Test
-    public void selectSubQueryTest()
-    {
+    public void selectSubQueryTest() {
         QMember memberSub = new QMember("memberSub");
 
         List<Tuple> result = jpaQueryFactory
@@ -413,33 +381,29 @@ public class QueryDslBasicTest {
                 .from(member)
                 .fetch();
 
-        for (Tuple tuple : result)
-        {
-            System.out.println("tuple = "+  tuple);
+        for (Tuple tuple : result) {
+            System.out.println("tuple = " + tuple);
         }
     }
 
     @Test
-    public void whenTest()
-    {
+    public void whenTest() {
         List<String> result = jpaQueryFactory.select(
                 member.age.when(10).then("10살")
                         .otherwise("기타"))
                 .from(member)
                 .fetch();
 
-        for(String m : result)
-        {
+        for (String m : result) {
             System.out.println(m);
         }
     }
+
     @Test
-    public void whenTest2()
-    {
+    public void whenTest2() {
         List<String> result = jpaQueryFactory.select(new CaseBuilder().when(member.age.between(0, 10)).then("0~10살").otherwise("기타")).from(member).fetch();
 
-        for (String s: result)
-        {
+        for (String s : result) {
             System.out.println(s);
         }
     }

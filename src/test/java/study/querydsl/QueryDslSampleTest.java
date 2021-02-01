@@ -146,21 +146,18 @@ public class QueryDslSampleTest {
     }
 
     @Test
-    public void findDtoByQueryProjection()
-    {
+    public void findDtoByQueryProjection() {
         List<UserDto> result = jpaQueryFactory
                 .select(new QUserDto(member.username, member.age))
                 .from(member)
                 .fetch();
-        for (UserDto userDto : result)
-        {
+        for (UserDto userDto : result) {
             System.out.println(userDto);
         }
     }
 
     @Test
-    public void dynamicQuery_Boolean_Builder()
-    {
+    public void dynamicQuery_Boolean_Builder() {
         String usernameParam = "T";
         Integer ageParam = 10;
 
@@ -172,32 +169,27 @@ public class QueryDslSampleTest {
     }
 
     @Test
-    public void dynamicQueryBooleanTest()
-    {
+    public void dynamicQueryBooleanTest() {
 
     }
 
-    private List<Member> searchMember1(String usernameParam, Integer ageParam)
-    {
+    private List<Member> searchMember1(String usernameParam, Integer ageParam) {
         BooleanBuilder builder = new BooleanBuilder();
 
-        if(usernameParam != null)
-        {
+        if (usernameParam != null) {
             builder.and(member.username.eq(usernameParam));
         }
 
-        if (ageParam != null)
-        {
+        if (ageParam != null) {
             builder.and(member.age.eq(ageParam));
         }
 
-        return  jpaQueryFactory.selectFrom(member)
+        return jpaQueryFactory.selectFrom(member)
                 .where(builder)
                 .fetch();
     }
 
-    private List<Member> searchMember2(String usernameParam, Integer ageParam)
-    {
+    private List<Member> searchMember2(String usernameParam, Integer ageParam) {
         return jpaQueryFactory
                 .selectFrom(member)
                 .where(allEq(usernameParam, ageParam))
@@ -205,29 +197,25 @@ public class QueryDslSampleTest {
     }
 
     private BooleanExpression ageEq(Integer ageParam) {
-        if (ageParam == null)
-        {
+        if (ageParam == null) {
             return null;
         }
         return member.age.eq(ageParam);
     }
 
     private BooleanExpression usernameEq(String usernameParam) {
-        if (usernameParam == null)
-        {
+        if (usernameParam == null) {
             return null;
         }
         return member.username.eq(usernameParam);
     }
 
-    private BooleanExpression allEq(String usernameCond, Integer ageCond)
-    {
+    private BooleanExpression allEq(String usernameCond, Integer ageCond) {
         return usernameEq(usernameCond).and(ageEq(ageCond));
     }
 
     @Test
-    public void bulkUpdate()
-    {
+    public void bulkUpdate() {
         long count = jpaQueryFactory
                 .update(member)
                 .set(member.username, "회원")
@@ -242,16 +230,14 @@ public class QueryDslSampleTest {
                 .where(member.age.gt(15))
                 .fetch();
 
-        for (Member member : members)
-        {
+        for (Member member : members) {
             System.out.println("member = " + member);
         }
         assertThat(count).isEqualTo(7);
     }
 
     @Test
-    public void bulkUpdateTest()
-    {
+    public void bulkUpdateTest() {
         long execute = jpaQueryFactory
                 .update(member)
                 .set(member.age, member.age.add(1))
@@ -259,8 +245,7 @@ public class QueryDslSampleTest {
     }
 
     @Test
-    public void bulkDelete()
-    {
+    public void bulkDelete() {
         long ct = jpaQueryFactory
                 .delete(member)
                 .where(member.age.gt(18))

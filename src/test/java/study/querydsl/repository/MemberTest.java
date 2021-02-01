@@ -20,8 +20,7 @@ public class MemberTest {
     EntityManager em;
 
     @Test
-    public void testMember1()
-    {
+    public void testMember1() {
         Team teamA = new Team("A");
         Team teamB = new Team("B");
 
@@ -41,9 +40,8 @@ public class MemberTest {
         em.flush(); // 영속성 컨텍스트에 있는 객체 db 업데이트
         em.clear(); // 영속성 컨텍스트 초기화 (캐시 다 날라감)
 
-        List<Member> members  = em.createQuery("select m from Member m", Member.class).getResultList();
-        for (Member member: members)
-        {
+        List<Member> members = em.createQuery("select m from Member m", Member.class).getResultList();
+        for (Member member : members) {
             System.out.println("member = " + member);
             System.out.println("team = " + member.getTeam());
         }

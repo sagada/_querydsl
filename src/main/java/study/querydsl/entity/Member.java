@@ -35,12 +35,9 @@ public class Member {
         this.username = username;
         this.age = age;
 
-        if (team != null)
-        {
+        if (team != null) {
             changeTeam(team);
-        }
-        else
-        {
+        } else {
             this.team = team;
         }
     }

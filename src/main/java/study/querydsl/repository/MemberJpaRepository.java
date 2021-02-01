@@ -29,50 +29,42 @@ public class MemberJpaRepository {
     }
 
 
-    public void save(Member member)
-    {
+    public void save(Member member) {
         entityManager.persist(member);
     }
 
-    public Optional<Member> findById(Long id)
-    {
-        Member member =entityManager.find(Member.class, id);
+    public Optional<Member> findById(Long id) {
+        Member member = entityManager.find(Member.class, id);
         return Optional.ofNullable(member);
     }
 
-    public List<Member> findAll(){
+    public List<Member> findAll() {
         return entityManager.createQuery("select m from Member m", Member.class).getResultList();
     }
 
-    public List<Member> findByUsername(String username)
-    {
+    public List<Member> findByUsername(String username) {
         return entityManager.createQuery("select m from Member m where m.username = :username", Member.class)
                 .setParameter("username", username)
                 .getResultList();
     }
 
-    public List<MemberTeamDto> searchByBuilder(MemberSearchCondition memberSearchCondition)
-    {
+    public List<MemberTeamDto> searchByBuilder(MemberSearchCondition memberSearchCondition) {
 
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (StringUtils.hasText(memberSearchCondition.getUsername()))
-        {
+        if (StringUtils.hasText(memberSearchCondition.getUsername())) {
             builder.and(member.username.eq(memberSearchCondition.getUsername()));
         }
 
-        if (StringUtils.hasText(memberSearchCondition.getTeamName()))
-        {
+        if (StringUtils.hasText(memberSearchCondition.getTeamName())) {
             builder.and(team.name.eq(memberSearchCondition.getTeamName()));
         }
 
-        if (memberSearchCondition.getAgeGoe() != null)
-        {
+        if (memberSearchCondition.getAgeGoe() != null) {
             builder.and(member.age.goe(memberSearchCondition.getAgeGoe()));
         }
 
-        if (memberSearchCondition.getAgeLoe() != null)
-        {
+        if (memberSearchCondition.getAgeLoe() != null) {
             builder.and(member.age.loe(memberSearchCondition.getAgeLoe()));
         }
 
@@ -90,8 +82,7 @@ public class MemberJpaRepository {
                 .fetch();
     }
 
-    public List<MemberTeamDto> search(MemberSearchCondition searchCondition)
-    {
+    public List<MemberTeamDto> search(MemberSearchCondition searchCondition) {
         return jpaQueryFactory
                 .select(new QMemberTeamDto(
                         member.id.as("memberId"),
@@ -110,8 +101,7 @@ public class MemberJpaRepository {
                 .fetch();
     }
 
-    public List<Member> searchEntity(MemberSearchCondition searchCondition)
-    {
+    public List<Member> searchEntity(MemberSearchCondition searchCondition) {
         return jpaQueryFactory
                 .selectFrom(member)
                 .leftJoin(member.team, team)
@@ -123,28 +113,23 @@ public class MemberJpaRepository {
                 .fetch();
     }
 
-    private BooleanExpression ageBetween(int ageLoe, int ageGoe)
-    {
+    private BooleanExpression ageBetween(int ageLoe, int ageGoe) {
         return ageGoe(ageLoe).and(ageLoe(ageLoe));
     }
 
-    private BooleanExpression ageGoe(Integer ageGoe)
-    {
+    private BooleanExpression ageGoe(Integer ageGoe) {
         return ageGoe != null ? member.age.goe(ageGoe) : null;
     }
 
-    private BooleanExpression ageLoe(Integer ageLoe)
-    {
+    private BooleanExpression ageLoe(Integer ageLoe) {
         return ageLoe != null ? member.age.loe(ageLoe) : null;
     }
 
-    private BooleanExpression teamNameEq(String teamName)
-    {
+    private BooleanExpression teamNameEq(String teamName) {
         return StringUtils.hasText(teamName) ? team.name.eq(teamName) : null;
     }
 
-    private BooleanExpression userNameEq(String username)
-    {
+    private BooleanExpression userNameEq(String username) {
         return StringUtils.hasText(username) ? member.username.eq(username) : null;
     }
 }

@@ -23,7 +23,7 @@ public class Team {
         this.name = name;
     }
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", fetch = FetchType.EAGER)
     private List<Member> memberList = new ArrayList<>();
 
 }

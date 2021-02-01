@@ -15,11 +15,9 @@ import java.util.List;
 public class MemberController {
 
     private final MemberJpaRepository memberJpaRepository;
-    private final MemberRepository memberRepository;
 
     @GetMapping("/v1/members")
-    public List<MemberTeamDto> searchMemberV1(MemberSearchCondition condition)
-    {
+    public List<MemberTeamDto> searchMemberV1(MemberSearchCondition condition) {
         return memberJpaRepository.searchByBuilder(condition);
     }
 
